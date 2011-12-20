@@ -5,6 +5,7 @@ clones, deploys, submodule checkouts
 """
 
 from fabric.api import *
+from fabric.colors import green
 from fabric.contrib import files, console
 from fabric.contrib.project import rsync_project
 from fabric import utils
@@ -86,7 +87,7 @@ def clone_repo():
 def deploy(deploy_level="staging"):
     """ deploy code to remote host by checking out the latest via git """
     setup_env(deploy_level)
-
+    print green('In Django Module. Running deploy()...')
     sudo('echo ping!') #hack/workaround for delayed console response
     if env.environment == 'production':
         if not console.confirm('Are you sure you want to deploy production?',
@@ -106,6 +107,7 @@ def bootstrap(deploy_level="staging"):
     Creates initial folders, clones the git repo. DOES NOT DEPLOY()
     """
     setup_env(deploy_level)
+    print green('In Django Module. Running bootstrap()...')
     sudo('echo ping!') #hack/workaround for delayed console response
     if env.environment == 'production':
         if not console.confirm('Are you sure you want to deploy production?',
@@ -120,10 +122,11 @@ def stop():
     """
         Does nothing in this module
     """
-    pass
+    print green('In Django Module. Doing nothing for command stop().')
+
 
 def start():
     """
         Does nothing in this module
     """
-    pass
+    print green('In Django Module. Doing nothing for command start().')
