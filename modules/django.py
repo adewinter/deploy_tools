@@ -51,10 +51,8 @@ def _setup_path():
 def setup_dirs():
     """ create (if necessary) and make writable uploaded media, log, etc. directories """
     require('root',provided_by=('setup_env'))
-    if not files.exists(env.root):
-        sudo('mkdir -p %(root)s' % env, user=env.sudo_user)
-    if not files.exists(env.log_dir):
-        sudo('mkdir -p %(log_dir)s' % env, user=env.sudo_user)
+    sudo('mkdir -p %(root)s' % env, user=env.sudo_user)
+    sudo('mkdir -p %(log_dir)s' % env, user=env.sudo_user)
     sudo('chmod a+w %(log_dir)s' % env, user=env.sudo_user)
 
 
