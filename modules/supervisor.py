@@ -12,8 +12,6 @@ from modules.utils import what_os
 
 import settings
 
-def init():
-    pass
 
 def setup_env(deploy_level="staging"):
     if deploy_level == "staging":
@@ -28,7 +26,6 @@ def setup_env(deploy_level="staging"):
 
     env.sup_dict = settings.SUPERVISOR_DICT
     env.project = settings.PROJECT_NAME
-    env.server_port = settings.DJANGO_GUNICORN_PORT
     env.project_root = settings.PROJECT_ROOT % env #remember to pass in the 'env' dict before using this field from settings, since it could contain keywords.
     _setup_path()
 
