@@ -22,31 +22,26 @@ def setup_env(deploy_level="staging"):
 
     env.sudo_user = settings.DJANGO_SUDO_USER
     env.code_repo = settings.DJANGO_GIT_REPO
-    env.project = settings.DJANGO_PROJECT_NAME
+    env.project = settings.PROJECT_NAME
     env.server_port = settings.DJANGO_GUNICORN_PORT
     env.settings = '%(project)s.localsettings' % env
     env.db = '%s_%s' % (env.project, env.environment)
-
     _setup_path()
-
 
 def _setup_path():
     """
     Creates all the various paths that will be needed
     in deploying code, populating config templates, etc.
     """
-    env.module_folder = posixpath.dirname(__file__)
-    env.deploy_root = posixpath.split(env.module_folder)
-    env.home = posixpath.split(settings.DJANGO_PROJECT_HOME)
     # using posixpath to ensure unix style slashes. See bug-ticket: http://code.fabfile.org/attachments/61/posixpath.patch
-    env.root = posixpath.join(env.home, 'www', env.environment)
-    env.log_dir = posixpath.join(env.home, 'www', env.environment, 'log')
-    env.code_root = posixpath.join(env.root, 'code_root')
-    env.project_root = posixpath.join(env.code_root, env.project)
+    env.project_root = settings.PROJECT_ROOT
+    env.www_root = posixpath.join(env.project_root,'www',env.environment)
+    env.log_dir = posixpath.join(env.www_root,'log')
+    env.code_root = posixpath.join(env.www_root,'code_root')
     env.project_media = posixpath.join(env.code_root, 'media')
     env.project_static = posixpath.join(env.project_root, 'static')
-    env.virtualenv_root = posixpath.join(env.root, 'python_env')
-    env.services = posixpath.join(env.home, 'services')
+    env.virtualenv_root = posixpath.join(env.www_root, 'python_env')
+    env.services = posixpath.join(env.project_root, 'services')
 
 def setup_dirs():
     """ create (if necessary) and make writable uploaded media, log, etc. directories """
