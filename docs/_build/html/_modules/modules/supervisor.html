@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>modules.supervisor &mdash; Dimagi Deploy Tools 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Dimagi Deploy Tools 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for modules.supervisor</h1><pre>
+"""
+Oh, god. Supervisord.
+"""
+import posixpath
+from fabric.context_managers import cd
+from fabric.contrib.files import uncomment
+from fabric.operations import sudo, require, put
+from fabric.state import env
+from fabric.contrib import files
+from fabric.colors import green
+from modules.utils import what_os
+
+import settings
+
+
+def setup_env(deploy_level="staging"):
+    if deploy_level == "staging":
+        _staging()
+    elif deploy_level == "production":
+        _production()
+    else:
+        raise Exception("Unrecognized Deploy Level: %s" % deploy_level)
+
+    env.user = settings.PROJECT_USER
+    env.sudo_user = settings.SUDO_USER
+
+    env.sup_dict = settings.SUPERVISOR_DICT
+    env.project = settings.PROJECT_NAME
+    env.project_root = settings.PROJECT_ROOT % env #remember to pass in the 'env' dict before using this field from settings, since it could contain keywords.
+    _setup_path()
+
+def _production():
+    """ use production environment on remote host"""
+    env.environment = 'production'
+    env.server_name = 'project-production.dimagi.com'
+    env.hosts = [settings.PRODUCTION_HOST]
+
+def _staging():
+    """ use staging environment on remote host"""
+    env.environment = 'staging'
+    env.server_name = 'project-staging.dimagi.com'
+    env.hosts = [settings.STAGING_HOST]
+
+def _setup_path():
+    """
+    Creates all the various paths that will be needed
+    in deploying code, populating config templates, etc.
+    """
+    # using posixpath to ensure unix style slashes. See bug-ticket: http://code.fabfile.org/attachments/61/posixpath.patch
+    env.sup_template_path = posixpath.join(posixpath.abspath(settings.__file__),settings.SUPERVISOR_TEMPLATE_PATH)
+    env.project_root = settings.PROJECT_ROOT
+    env.www_root = posixpath.join(env.project_root,'www',env.environment)
+    env.log_dir = posixpath.join(env.www_root,'log')
+    env.code_root = posixpath.join(env.www_root,'code_root')
+    env.project_media = posixpath.join(env.code_root, 'media')
+    env.project_static = posixpath.join(env.project_root, 'static')
+    env.virtuanlenv_name = getattr(settings, 'PYTHON_ENV_NAME', 'python_env') #not a required setting and should be sufficient with default name
+    env.virtualenv_root = posixpath.join(env.www_root, env.virtualenv_name)
+    env.services_root = posixpath.join(env.project_root, 'services')
+    env.supervisor_conf_root = posixpath.join(env.services_root, 'supervisor')
+    env.supervisor_conf_path = posixpath.join(env.supervisor_conf_root, 'supervisor.conf')
+    env.supervisor_init_template_path = settings.SUPERVISOR_INIT_TEMPLATE
+
+
+<div class="viewcode-block" id="setup_dirs"><a class="viewcode-back" href="../../supervisor.html#modules.supervisor.setup_dirs">[docs]</a>def setup_dirs():
+    """ create (if necessary) and make writable uploaded media, log, etc. directories """
+    if not files.exists(env.log_dir):
+        print green('Log Directory (%s) does not exist on host, creating...' % env.log_dir)
+        sudo('mkdir -p %(log_dir)s' % env, user=env.sudo_user)
+        sudo('chmod a+w %(log_dir)s' % env, user=env.sudo_user)
+
+    if not files.exists(env.services_supervisor):
+        print green('Supervisor services (%s) folder does not exist. Creating...' % env.supervisor_conf_root)
+        sudo('mkdir -p %(supervisor_conf_root)s' % env, user=env.sudo_user)
+</div>
+<div class="viewcode-block" id="upload_sup_template"><a class="viewcode-back" href="../../supervisor.html#modules.supervisor.upload_sup_template">[docs]</a>def upload_sup_template():
+    """
+    Uploads the supervisor template to the server (while populating the template)
+    """
+    require('supervisor_conf_path','services_root','sudo_user', 'sup_template_path', provided_by=('setup_env'))
+    files.upload_template(env.sup_template_path, env.supervisor_conf_path, context=env.sup_dict, use_sudo=True)
+</div>
+def install_supervisor():
+    require('environment', 'project_root', 'virtualenv_root', 'sudo_user', provided_by='setup_env')
+
+    #we don't install supervisor in the virtualenv since we want it to be able to run systemwide.
+    sudo('pip install supervisor' % env, user=env.sudo_user, pty=True, shell=True)
+
+    #create the standard conf file
+    sudo('echo_supervisord_conf &gt; /tmp/supervisord.conf' % env)
+    sudo('mv /tmp/supervisord.conf /etc/supervisord.conf')
+
+    #uncomment the include directive in supervisord.conf so we can point it to our supervisor conf
+    uncomment('/etc/supervisord.conf', '\;\\[include\\]', use_sudo=True, char=';', backup='.bak')
+    sudo("echo 'files = %(supervisor_conf_root)s/*.conf' &gt;&gt; /etc/supervisord.conf" % env)
+
+    put(env.supervisor_init_path, '/tmp/supervisor_init.tmp', mode='0777')
+    sudo('mv /tmp/supervisor_init /etc/init.d/supervisord')
+    sudo('chmod +x /etc/init.d/supervisord')
+    sudo('update-rc.d supervisord defaults')
+    sudo('service supervisord start')
+
+    #update supervisor instance
+    _supervisor_command('update')
+
+<div class="viewcode-block" id="bootstrap"><a class="viewcode-back" href="../../supervisor.html#modules.supervisor.bootstrap">[docs]</a>def bootstrap():
+    """
+    Installs supervisor, creates required directories (if they don't exist). Points supervisord.conf to look in the correct
+    folder for service info
+    """
+    require('environment', 'project_root', 'virtualenv_root', 'sudo_user', provided_by='setup_env')
+    install_supervisor()
+    setup_dirs()
+    upload_sup_template()
+
+</div>
+def _supervisor_command(command):
+    require('hosts', provided_by=('setup_env'))
+    sudo('supervisorctl %s' % command)</pre>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anton de Winter.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

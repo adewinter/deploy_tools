@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Packages Module &mdash; Dimagi Deploy Tools 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Dimagi Deploy Tools 0.1 documentation" href="index.html" />
+    <link rel="up" title="Dimagi Deploy Tools Modules" href="modules.html" />
+    <link rel="next" title="Supervisor Module" href="supervisor.html" />
+    <link rel="prev" title="OS Module" href="os.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="supervisor.html" title="Supervisor Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="os.html" title="OS Module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="core.html" >The Core</a> &raquo;</li>
+          <li><a href="modules.html" accesskey="U">Dimagi Deploy Tools Modules</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="packages-module">
+<h1>Packages Module<a class="headerlink" href="#packages-module" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-modules.packages"></span><p>Deals with pip requirements.
+(Initial installing, refreshing, etc)</p>
+<dl class="function">
+<dt id="modules.packages.bootstrap">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">bootstrap</tt><big>(</big><em>deploy_level='staging'</em><big>)</big><a class="reference internal" href="_modules/modules/packages.html#bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs initial install of virtualenv, then installs listed pip packages specified in settings file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.deploy">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">deploy</tt><big>(</big><em>deploy_level='staging'</em><big>)</big><a class="reference internal" href="_modules/modules/packages.html#deploy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.deploy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Installs all packages listed in the pip packages list file(s) specified in settings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.install_packages">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">install_packages</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/packages.html#install_packages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.install_packages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install packages, given a list of package names</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.setup_virtualenv">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">setup_virtualenv</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/packages.html#setup_virtualenv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.setup_virtualenv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initially creates the virtualenv in the correct places (creating directory structures as necessary) on the
+remote host</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.start">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/packages.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing in this module</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.stop">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">stop</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/packages.html#stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing in this module</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.packages.upload_pip_requires">
+<tt class="descclassname">modules.packages.</tt><tt class="descname">upload_pip_requires</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/packages.html#upload_pip_requires"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.packages.upload_pip_requires" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads the pip requirements file to the host machine and sets
+the relevant env variables</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="os.html"
+                        title="previous chapter">OS Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="supervisor.html"
+                        title="next chapter">Supervisor Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/packages.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="supervisor.html" title="Supervisor Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="os.html" title="OS Module"
+             >previous</a> |</li>
+        <li><a href="index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="core.html" >The Core</a> &raquo;</li>
+          <li><a href="modules.html" >Dimagi Deploy Tools Modules</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anton de Winter.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

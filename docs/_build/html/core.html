@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Core &mdash; Dimagi Deploy Tools 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Dimagi Deploy Tools 0.1 documentation" href="index.html" />
+    <link rel="next" title="Dimagi Deploy Tools Modules" href="modules.html" />
+    <link rel="prev" title="Welcome to Dimagi Deploy Tools’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="Dimagi Deploy Tools Modules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Dimagi Deploy Tools’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-core">
+<h1>The Core<a class="headerlink" href="#the-core" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Dimagi Deploy Tools Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="django.html">Django Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="os.html">OS Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packages.html">Packages Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="supervisor.html">Supervisor Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html">Web Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils Module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>&#8212;</p>
+<span class="target" id="module-fabfile"></span><p>The meat.</p>
+<p>Goes through your settings file to determine what modules you&#8217;ve included</p>
+<p>If you call &#8216;deploy&#8217; here, deploy will variously be called in each module you&#8217;ve listed in settings (if applicable).</p>
+<dl class="docutils">
+<dt>E.g. deploy in &#8216;web&#8217; will mean a refresh of the HTTPD config file and a restart of the service,</dt>
+<dd>in &#8216;packages&#8217; it will simply mean checking the requirements files specified in settings to make sure everything is up to date.
+in &#8216;django&#8217; it will mean checking out the git repo, relevant submodules and a refresh of the localsettings.py file.</dd>
+</dl>
+<p>Similar concepts apply to &#8216;bootstrap&#8217;, &#8216;stop&#8217;, &#8216;start&#8217; and &#8216;restart&#8217;.</p>
+<dl class="function">
+<dt id="fabfile.bootstrap">
+<tt class="descclassname">fabfile.</tt><tt class="descname">bootstrap</tt><big>(</big><em>module=None</em><big>)</big><a class="reference internal" href="_modules/fabfile.html#bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabfile.bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the bootstrap command for each module.</p>
+<p>If &#8216;module&#8217; argument is specified, this command will only be run for that specific module.</p>
+<p>Bootstrapping is usually associated with initial setup or
+the module being called upon for the first time.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fabfile.deploy">
+<tt class="descclassname">fabfile.</tt><tt class="descname">deploy</tt><big>(</big><em>module=None</em><big>)</big><a class="reference internal" href="_modules/fabfile.html#deploy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabfile.deploy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the deploy command for each module.</p>
+<p>If &#8216;module&#8217; argument is specified, this command will only be run for that specific module.</p>
+<p>&#8216;Deployment&#8217; is usually associated with a refreshing/updating
+of content/data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fabfile.start">
+<tt class="descclassname">fabfile.</tt><tt class="descname">start</tt><big>(</big><em>module=None</em><big>)</big><a class="reference internal" href="_modules/fabfile.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabfile.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the start command for each module.</p>
+<p>If &#8216;module&#8217; argument is specified, this command will only be run for that specific module.</p>
+<p>&#8216;Starting&#8217; is usually associated with services that can be started/stopped. (Useful for restarting services manually)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fabfile.stop">
+<tt class="descclassname">fabfile.</tt><tt class="descname">stop</tt><big>(</big><em>module=None</em><big>)</big><a class="reference internal" href="_modules/fabfile.html#stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fabfile.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the stop command for each module.</p>
+<p>If &#8216;module&#8217; argument is specified, this command will only be run for that specific module.</p>
+<p>&#8216;Stopping&#8217; is usually associated with services that can be started/stopped. (Useful for restarting services manually)</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Dimagi Deploy Tools&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modules.html"
+                        title="next chapter">Dimagi Deploy Tools Modules</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/core.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="Dimagi Deploy Tools Modules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Dimagi Deploy Tools’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anton de Winter.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

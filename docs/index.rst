@@ -9,9 +9,15 @@ Welcome to Dimagi Deploy Tools's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
+
+   core
+
+some stuff
 
 
+
+other stuff.
 
 Indices and tables
 ==================

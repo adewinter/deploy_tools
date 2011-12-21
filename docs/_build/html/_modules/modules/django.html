@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>modules.django &mdash; Dimagi Deploy Tools 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Dimagi Deploy Tools 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for modules.django</h1><pre>
+"""
+Django deployment module.
+Creates necessary folders for housing project source code
+clones, deploys, submodule checkouts
+"""
+
+from fabric.api import *
+from fabric.colors import green
+from fabric.contrib import files, console
+from fabric.contrib.project import rsync_project
+from fabric import utils
+from fabric.decorators import hosts
+import posixpath
+
+def setup_env(deploy_level="staging"):
+    if deploy_level == "staging":
+        _staging()
+    elif deploy_level == "production":
+        _production()
+    else:
+        raise Exception("Unrecognized Deploy Level: %s" % deploy_level)
+
+    env.sudo_user = settings.DJANGO_SUDO_USER
+    env.code_repo = settings.DJANGO_GIT_REPO
+    env.project = settings.PROJECT_NAME
+    env.server_port = settings.DJANGO_GUNICORN_PORT
+    env.settings = '%(project)s.localsettings' % env
+    env.db = '%s_%s' % (env.project, env.environment)
+    _setup_path()
+
+def _setup_path():
+    """
+    Creates all the various paths that will be needed
+    in deploying code, populating config templates, etc.
+    """
+    # using posixpath to ensure unix style slashes. See bug-ticket: http://code.fabfile.org/attachments/61/posixpath.patch
+    env.project_root = settings.PROJECT_ROOT
+    env.www_root = posixpath.join(env.project_root,'www',env.environment)
+    env.log_dir = posixpath.join(env.www_root,'log')
+    env.code_root = posixpath.join(env.www_root,'code_root')
+    env.project_media = posixpath.join(env.code_root, 'media')
+    env.project_static = posixpath.join(env.project_root, 'static')
+    env.virtualenv_root = posixpath.join(env.www_root, 'python_env')
+    env.services = posixpath.join(env.project_root, 'services')
+
+<div class="viewcode-block" id="setup_dirs"><a class="viewcode-back" href="../../django.html#modules.django.setup_dirs">[docs]</a>def setup_dirs():
+    """ create (if necessary) and make writable uploaded media, log, etc. directories """
+    require('root',provided_by=('setup_env'))
+    sudo('mkdir -p %(root)s' % env, user=env.sudo_user)
+    sudo('mkdir -p %(log_dir)s' % env, user=env.sudo_user)
+    sudo('chmod a+w %(log_dir)s' % env, user=env.sudo_user)
+
+</div>
+def _production():
+    """ use production environment on remote host"""
+    env.code_branch = settings.DJANGO_PRODUCTION_GIT_BRANCH
+    env.environment = 'production'
+    env.server_name = 'project-production.dimagi.com'
+    env.hosts = [settings.PRODUCTION_HOST]
+
+def _staging():
+    """ use staging environment on remote host"""
+    env.code_branch = settings.DJANGO_STAGING_GIT_BRANCH
+    env.environment = 'staging'
+    env.server_name = 'project-staging.dimagi.com'
+    env.hosts = [settings.STAGING_HOST]
+
+<div class="viewcode-block" id="collectstatic"><a class="viewcode-back" href="../../django.html#modules.django.collectstatic">[docs]</a>def collectstatic():
+    """ run collectstatic on remote environment. ASSUMES YOU ALREADY HAVE ALL REQUIRED PACKAGES AND VIRTUALENV INSTALLED. """
+    require('project_root', provided_by=('setup_env'))
+    with cd(env.project_root):
+        sudo('%(virtualenv_root)s/bin/python manage.py collectstatic --noinput --settings=%(settings)s' % env, user=env.sudo_user)
+</div>
+<div class="viewcode-block" id="clone_repo"><a class="viewcode-back" href="../../django.html#modules.django.clone_repo">[docs]</a>def clone_repo():
+    """ clone a new copy of the git repository """
+    require('root', provided_by=('setup_env'))
+    with cd(env.root):
+        sudo('git clone %(code_repo)s %(code_root)s' % env, user=env.sudo_user)
+</div>
+<div class="viewcode-block" id="deploy"><a class="viewcode-back" href="../../django.html#modules.django.deploy">[docs]</a>def deploy(deploy_level="staging"):
+    """ deploy code to remote host by checking out the latest via git """
+    setup_env(deploy_level)
+    print green('In Django Module. Running deploy()...')
+    sudo('echo ping!') #hack/workaround for delayed console response
+    if env.environment == 'production':
+        if not console.confirm('Are you sure you want to deploy production?',
+                               default=False):
+            utils.abort('Production deployment aborted.')
+
+    with cd(env.code_root):
+        sudo('git checkout %(code_branch)s' % env, user=env.sudo_user)
+        sudo('git pull', user=env.sudo_user)
+        sudo('git submodule init', user=env.sudo_user)
+        sudo('git submodule update', user=env.sudo_user)
+            
+    collectstatic()
+</div>
+<div class="viewcode-block" id="bootstrap"><a class="viewcode-back" href="../../django.html#modules.django.bootstrap">[docs]</a>def bootstrap(deploy_level="staging"):
+    """
+    Creates initial folders, clones the git repo. DOES NOT DEPLOY()
+    """
+    setup_env(deploy_level)
+    print green('In Django Module. Running bootstrap()...')
+    sudo('echo ping!') #hack/workaround for delayed console response
+    if env.environment == 'production':
+        if not console.confirm('Are you sure you want to deploy production?',
+                               default=False):
+            utils.abort('Production deployment aborted.')
+
+    setup_dirs()
+    clone_repo()
+
+</div>
+<div class="viewcode-block" id="stop"><a class="viewcode-back" href="../../django.html#modules.django.stop">[docs]</a>def stop():
+    """
+        Does nothing in this module
+    """
+    print green('In Django Module. Doing nothing for command stop().')
+
+</div>
+<div class="viewcode-block" id="start"><a class="viewcode-back" href="../../django.html#modules.django.start">[docs]</a>def start():
+    """
+        Does nothing in this module
+    """
+    print green('In Django Module. Doing nothing for command start().')</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Dimagi Deploy Tools 0.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anton de Winter.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
