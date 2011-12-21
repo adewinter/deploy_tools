@@ -11,7 +11,8 @@ Contents:
 
 ---
 
-.. automodule:: fabfile
+.. automodule:: deploy_tools.fabfile
    :members:
+
 
 
