@@ -66,6 +66,17 @@
 <span class="target" id="module-modules.django"></span><p>Django deployment module.
 Creates necessary folders for housing project source code
 clones, deploys, submodule checkouts</p>
+<div class="section" id="django-module-settings">
+<h2>Django Module Settings<a class="headerlink" href="#django-module-settings" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DJANGO_GIT_REPO_URL</span> <span class="o">=</span> <span class="s">&quot;git://your/repo.git&quot;</span> <span class="c">#django project repo url</span>
+<span class="n">DJANGO_SUDO_USER</span> <span class="o">=</span> <span class="s">&quot;some_user&quot;</span>
+<span class="n">DJANGO_STAGING_GIT_BRANCH</span> <span class="o">=</span> <span class="s">&quot;develop&quot;</span>
+<span class="n">DJANGO_STAGING_SERVER_NAME</span> <span class="o">=</span> <span class="s">&quot;staging.some_project.com&quot;</span>
+<span class="n">DJANGO_PRODUCTION_GIT_BRANCH</span> <span class="o">=</span> <span class="s">&quot;master&quot;</span>
+<span class="n">DJANGO_PRODUCTION_SERVER_NAME</span> <span class="o">=</span> <span class="s">&quot;production.some_project.com&quot;</span>
+<span class="n">DJANGO_GUNICORN_PORT</span> <span class="o">=</span> <span class="s">&#39;9010&#39;</span>
+</pre></div>
+</div>
 <dl class="function">
 <dt id="modules.django.bootstrap">
 <tt class="descclassname">modules.django.</tt><tt class="descname">bootstrap</tt><big>(</big><em>deploy_level='staging'</em><big>)</big><a class="reference internal" href="_modules/modules/django.html#bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.django.bootstrap" title="Permalink to this definition">¶</a></dt>
@@ -109,6 +120,7 @@ clones, deploys, submodule checkouts</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -116,6 +128,14 @@ clones, deploys, submodule checkouts</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Django Module</a><ul>
+<li><a class="reference internal" href="#django-module-settings">Django Module Settings</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="modules.html"
                         title="previous chapter">Dimagi Deploy Tools Modules</a></p>

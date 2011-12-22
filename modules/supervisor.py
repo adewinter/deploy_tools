@@ -1,5 +1,23 @@
 """
 Oh, god. Supervisord.
+
+Installs Supervisord on the remote machine.  Uses the standard config file produced by the ``echo_supervisord_conf`` command.
+This standard config is modified to point to your custom supervisord.conf template (that actually has the commands
+used for stopping/starting/etc a process).
+
+
+Supervisor Module Settings
+--------------------------
+::
+
+    SUPERVISOR_TEMPLATE_PATH = "templates/supervisorctl.conf"  #PATH ON LOCAL DISK, RELATIVE TO THIS FILE
+    SUPERVISOR_INIT_TEMPLATE = "templates/supervisor-init"  #PATH ON LOCAL DISK, Relative to THIS file.
+    SUPERVISOR_DICT = {
+        "gunicorn_port": DJANGO_GUNICORN_PORT,
+        "gunicorn_workers": 3
+    }
+
+
 """
 import posixpath
 from fabric.context_managers import cd

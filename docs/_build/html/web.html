@@ -65,6 +65,15 @@
 </div>
 <span class="target" id="module-modules.web"></span><p>Install/Configure web services
 (e.g. Apache/Nginx)</p>
+<div class="section" id="web-module-settings">
+<h2>Web Module Settings<a class="headerlink" href="#web-module-settings" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">WEB_HTTPD</span> <span class="o">=</span> <span class="s">&quot;apache&quot;</span> <span class="c">#apache2 or nginx</span>
+<span class="n">WEB_CONFIG_TEMPLATE_PATH</span> <span class="o">=</span> <span class="s">&quot;templates/my_apache.conf&quot;</span>
+<span class="n">WEB_PARAM_DICT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;HOST_PORT&quot;</span> <span class="p">:</span> <span class="mi">80</span> <span class="c">#Primary port for hosting things</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="function">
 <dt id="modules.web.bootstrap">
 <tt class="descclassname">modules.web.</tt><tt class="descname">bootstrap</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/web.html#bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.web.bootstrap" title="Permalink to this definition">¶</a></dt>
@@ -96,6 +105,7 @@
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -103,6 +113,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Web Module</a><ul>
+<li><a class="reference internal" href="#web-module-settings">Web Module Settings</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="supervisor.html"
                         title="previous chapter">Supervisor Module</a></p>

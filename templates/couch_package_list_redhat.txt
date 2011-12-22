@@ -1,0 +1,9 @@
+libicu-devel
+openssl-devel
+curl-devel
+make
+gcc
+erlang
+js-devel
+libtool
+which

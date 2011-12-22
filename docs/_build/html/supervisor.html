@@ -64,6 +64,19 @@
 </ul>
 </div>
 <span class="target" id="module-modules.supervisor"></span><p>Oh, god. Supervisord.</p>
+<p>Installs Supervisord on the remote machine.  Uses the standard config file produced by the <tt class="docutils literal"><span class="pre">echo_supervisord_conf</span></tt> command.
+This standard config is modified to point to your custom supervisord.conf template (that actually has the commands
+used for stopping/starting/etc a process).</p>
+<div class="section" id="supervisor-module-settings">
+<h2>Supervisor Module Settings<a class="headerlink" href="#supervisor-module-settings" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">SUPERVISOR_TEMPLATE_PATH</span> <span class="o">=</span> <span class="s">&quot;templates/supervisorctl.conf&quot;</span>  <span class="c">#PATH ON LOCAL DISK, RELATIVE TO THIS FILE</span>
+<span class="n">SUPERVISOR_INIT_TEMPLATE</span> <span class="o">=</span> <span class="s">&quot;templates/supervisor-init&quot;</span>  <span class="c">#PATH ON LOCAL DISK, Relative to THIS file.</span>
+<span class="n">SUPERVISOR_DICT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;gunicorn_port&quot;</span><span class="p">:</span> <span class="n">DJANGO_GUNICORN_PORT</span><span class="p">,</span>
+    <span class="s">&quot;gunicorn_workers&quot;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <dl class="function">
 <dt id="modules.supervisor.bootstrap">
 <tt class="descclassname">modules.supervisor.</tt><tt class="descname">bootstrap</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/modules/supervisor.html#bootstrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.supervisor.bootstrap" title="Permalink to this definition">¶</a></dt>
@@ -84,6 +97,7 @@ folder for service info</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -91,6 +105,14 @@ folder for service info</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Supervisor Module</a><ul>
+<li><a class="reference internal" href="#supervisor-module-settings">Supervisor Module Settings</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="packages.html"
                         title="previous chapter">Packages Module</a></p>

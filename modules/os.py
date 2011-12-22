@@ -3,6 +3,15 @@ OS Level Operations.
 Creates required users
 Installs base packages
 Misc OS level config
+
+OS MODULE SPECIFIC SETTINGS
+---------------------------
+
+##### OS MODULE SPECIFIC SETTINGS ######::
+
+   OS_PACKAGE_LIST_PATH_REDHAT = "yum_packages.txt" #each package on a new line in this file
+   OS_PACKAGE_LIST_PATH_UBUNTU = "apt_packages.txt" #each package on a new line in this file
+
 """
 from fabric.api import *
 from fabric.colors import green
