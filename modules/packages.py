@@ -1,6 +1,12 @@
 """
 Deals with pip requirements.
 (Initial installing, refreshing, etc)
+
+Packages Module Settings
+----------------------------------------------
+::
+
+    PACKAGES_PIP_REQUIREMENTS_PATH = "pip_requires.txt" #The path to pip_requires file ON THE LOCAL Machine, relative to this settings.py file.
 """
 from fabric.api import *
 from fabric.colors import green

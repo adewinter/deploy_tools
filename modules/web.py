@@ -1,6 +1,17 @@
 """
 Install/Configure web services
 (e.g. Apache/Nginx)
+
+Web Module Settings
+-------------------
+::
+
+    WEB_HTTPD = "apache" #apache2 or nginx
+    WEB_CONFIG_TEMPLATE_PATH = "templates/my_apache.conf"
+    WEB_PARAM_DICT = {
+        "HOST_PORT" : 80 #Primary port for hosting things
+    }
+
 """
 import posixpath
 from fabric import utils

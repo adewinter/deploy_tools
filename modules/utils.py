@@ -1,13 +1,10 @@
 """
 Utility functions
-(e.g. Determining the remote system OS
+(e.g. Determining the remote system OS)
 """
-
 from fabric.context_managers import *
 from fabric.operations import *
 import sys
-
-
 
 def what_os():
     """

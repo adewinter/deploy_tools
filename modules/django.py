@@ -2,14 +2,28 @@
 Django deployment module.
 Creates necessary folders for housing project source code
 clones, deploys, submodule checkouts
+
+.. _django-module-settings:
+
+Django Module Settings
+----------------------
+::
+
+    DJANGO_GIT_REPO_URL = "git://your/repo.git" #django project repo url
+    DJANGO_SUDO_USER = "some_user"
+    DJANGO_STAGING_GIT_BRANCH = "develop"
+    DJANGO_STAGING_SERVER_NAME = "staging.some_project.com"
+    DJANGO_PRODUCTION_GIT_BRANCH = "master"
+    DJANGO_PRODUCTION_SERVER_NAME = "production.some_project.com"
+    DJANGO_GUNICORN_PORT = '9010'
+
+
 """
 
 from fabric.api import *
 from fabric.colors import green
 from fabric.contrib import files, console
-from fabric.contrib.project import rsync_project
 from fabric import utils
-from fabric.decorators import hosts
 import posixpath
 
 def setup_env(deploy_level="staging"):
