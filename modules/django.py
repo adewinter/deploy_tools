@@ -25,6 +25,7 @@ from fabric.colors import green
 from fabric.contrib import files, console
 from fabric import utils
 import posixpath
+import settings
 
 def setup_env(deploy_level="staging"):
     if deploy_level == "staging":

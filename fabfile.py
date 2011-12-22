@@ -1,4 +1,7 @@
 """
+####################
+The Core Fabric File
+####################
 
 This Fabric file ('fabfile') goes through your settings file to determine what modules you've included, and allows
 one to call the same command on each of these modules.
@@ -58,39 +61,6 @@ by modifying the ``MODULES`` field in settings.py::
 As with django, it's possible to author your own modules and plug them into this list.
 
 
-=====
-Usage
-=====
-
-There are two options for getting this project set up:
-
-1. Add this repo as a submodule to your existing project.
-2. Install it on your python path.
-
-Henceforth, this document will assume it is a submodule in some larger project.
-
-Next, ensure that your setting.py is configured.  Look at settings.py.example for... an example.
-
-From the command line simply run::
-
-    $ fab production bootstrap deploy stop start
-
-Details:
-
-* ``fab`` is the command that invokes deploy tools. See the `Fabric Documentation <http://http://docs.fabfile.org>`_ for
-  more information
-* ``production`` indicates that the remote host is a production level machine (as opposed to staging).
-* ``bootstrap deploy stop start`` are all the operating methods we would like to perform.
-
-This action will cause deploy_tools to do bootstrap within each module, refresh all respective code (deploy), stop all
-services then start all services (a.k.a restart).
-
-
-
-
-There is no next step.  Your server should now live and ready for action!
-
-
 ====================
 Other Usage Examples
 ====================
@@ -144,10 +114,17 @@ def _setup_env():
     env.deploy_modules = deploy_settings.MODULES
 
 def production():
+    """ use production environment on remote host"""
+    env.environment = 'production'
+    env.server_name = 'project-production.dimagi.com'
+    env.hosts = deploy_settings.PRODUCTION_HOST
     env.deploy_level = 'production'
     _setup_env()
 
 def staging():
+    env.environment = 'staging'
+    env.server_name = 'project-staging.dimagi.com'
+    env.hosts = deploy_settings.STAGING_HOST
     env.deploy_level = 'staging'
     _setup_env()
 
@@ -162,7 +139,8 @@ def run_command(cmd,module=None,*args,**kwargs):
     for m in modules:
         mod = try_import(m)
         if mod is not None:
-            getattr(mod,cmd)(args,kwargs)
+            print 'Module is: %s, args: %s, kwargs: %s' % (mod, args, kwargs)
+            getattr(mod,cmd)(*args,**kwargs)
         else:
             print red('Failed to import Module: %s. Command "%s" not executed.' % (m, cmd))
             utils.abort('Failed to import Module: %s. Command "%s" not executed.' % (m, cmd))

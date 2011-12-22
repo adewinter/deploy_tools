@@ -4,6 +4,8 @@ Utility functions
 """
 from fabric.context_managers import *
 from fabric.operations import *
+from fabric.contrib import files
+from fabric.api import env
 import sys
 
 def what_os():
@@ -15,10 +17,17 @@ def what_os():
         hide('warnings', 'running', 'stdout', 'stderr'),
         warn_only=True
     ):
-        if run('ls /etc/lsb-release'):
-            return 'ubuntu'
-        elif run('ls /etc/redhat-release'):
-            return 'redhat'
+        print 'Testing operating system type...'
+        if(files.exists('/etc/lsb-release',verbose=True) and files.contains(text='DISTRIB_ID=Ubuntu', filename='/etc/lsb-release')):
+            env.os = 'ubuntu'
+            print 'Found lsb-release and contains "DISTRIB_ID=Ubuntu", this is an Ubuntu System.'
+        elif(files.exists('/etc/redhat-release',verbose=True)):
+            env.os = 'redhat'
+            print 'Found /etc/redhat-release, this is a RedHat system.'
+        else:
+            print 'System OS not recognized! Aborting.'
+            exit()
+        return env.os
 
 
 def try_import(module_name):

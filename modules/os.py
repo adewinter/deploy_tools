@@ -16,6 +16,7 @@ from fabric.api import *
 from fabric.colors import green
 from fabric import utils
 from modules.utils import what_os
+import settings
 
 def setup_env(deploy_level="staging"):
     if deploy_level == "staging":
@@ -29,38 +30,38 @@ def setup_env(deploy_level="staging"):
         env.package_list = settings.OS_PACKAGE_LIST_PATH_UBUNTU
         env.package_install_cmd = 'apt_get install -y'
     elif env.os == 'redhat':
-        env.package_install_cmd = 'yum install'
+        env.package_install_cmd = 'yum install -y'
         env.package_list = settings.OS_PACKAGE_LIST_PATH_REDHAT
     else:
         utils.abort('Unrecognized OS: %s. Aborting.' % env.os)
-    env.project = settings.DJANGO_PROJECT_NAME
+    env.project = settings.PROJECT_NAME
     
 def _production():
     """ use production environment on remote host"""
     env.environment = 'production'
     env.server_name = 'project-production.dimagi.com'
-    env.hosts = [settings.PRODUCTION_HOST]
+    env.hosts = settings.PRODUCTION_HOST
 
 
 def _staging():
     """ use staging environment on remote host"""
     env.environment = 'staging'
     env.server_name = 'project-staging.dimagi.com'
-    env.hosts = [settings.STAGING_HOST]
+    env.hosts = settings.STAGING_HOST
 
 def install_packages():
     """Install packages, given a list of package names"""
-    require('package_install_command', provided_by=('setup_env'))
-    with open(env.packages_list) as f:
+    require('package_install_cmd', 'package_list', provided_by=('setup_env'))
+    with open(env.package_list) as f:
         packages = f.readlines()
     env.packages_to_install = " ".join(map(lambda x: x.strip('\n\r'), packages))
-    sudo('%(package_install_command)s %(packages_to_install)s' % env)
+    sudo('%(package_install_cmd)s %(packages_to_install)s' % env)
 
 def bootstrap(deploy_level='staging'):
     """
     Installs all packages listed in the OS packages list file(s) specified in settings.
     """
-    print green('In OS Module. Running bootstrap()...')
+    print green(' IN OS MODULE. RUNNING BOOTSTRAP()...')
     setup_env(deploy_level)
     install_packages()
 

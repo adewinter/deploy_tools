@@ -36,14 +36,14 @@ def _production():
     """ use production environment on remote host"""
     env.environment = 'production'
     env.server_name = 'project-production.dimagi.com'
-    env.hosts = [settings.PRODUCTION_HOST]
+    env.hosts = settings.PRODUCTION_HOST
 
 
 def _staging():
     """ use staging environment on remote host"""
     env.environment = 'staging'
     env.server_name = 'project-staging.dimagi.com'
-    env.hosts = [settings.STAGING_HOST]
+    env.hosts = settings.STAGING_HOST
 
 def upload_pip_requires():
     """
