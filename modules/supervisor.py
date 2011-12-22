@@ -27,7 +27,6 @@ from fabric.state import env
 from fabric.contrib import files
 from fabric.colors import green
 from modules.utils import what_os
-
 import settings
 
 

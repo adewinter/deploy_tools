@@ -21,9 +21,7 @@ Django Module Settings
 from fabric.api import *
 from fabric.colors import green
 from fabric.contrib import files, console
-from fabric.contrib.project import rsync_project
 from fabric import utils
-from fabric.decorators import hosts
 import posixpath
 
 def setup_env(deploy_level="staging"):
