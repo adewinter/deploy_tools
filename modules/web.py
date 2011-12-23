@@ -42,8 +42,8 @@ def setup_env(deploy_level="staging"):
     else:
         raise Exception("Unrecognized Deploy Level: %s" % deploy_level)
     env.os = what_os()
-    env.user = settings.PROJECT_USER
-    env.sudo_user = settings.SUDO_USER
+#    env.user = settings.PROJECT_USER
+#    env.sudo_user = settings.SUDO_USER
     env.project = settings.PROJECT_NAME
     env.project_root = settings.PROJECT_ROOT % env #remember to pass in the 'env' dict before using this field from settings, since it could contain keywords.
     env.httpd = settings.WEB_HTTPD
@@ -140,9 +140,9 @@ def upload_apache_conf():
     """
     require('environment', 'httpd_services_template_name', provided_by=('setup_env'))
     env.tmp_destination = posixpath.join('/', 'tmp', env.httpd_services_template_name)
-    print yellow('PASSWORD REQUIRED FOR SUDO USER: %(sudo_user)s' % env)
     files.upload_template(env.httpd_local_template_path, env.tmp_destination, context=env.httpd_dict, use_sudo=True)
-    sudo('chown -R %(sudo_user)s %(tmp_destination)s' % env)
+    env.httpd_sudo_user = settings.SUDO_USER
+    sudo('chown -R %(httpd_sudo_user)s %(tmp_destination)s' % env)
     sudo('chgrp -R %(httpd_user_group)s %(tmp_destination)s' % env)
     sudo('chmod -R g+w %(tmp_destination)s' % env)
     sudo('mv -f %(tmp_destination)s %(httpd_remote_services_template_path)s' % env)
@@ -160,7 +160,7 @@ def run_apache_command(command):
     """
     Runs the given command on the apache service
     """
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     if env.os == 'ubuntu':
         httpd_service_name = 'apache2'
     elif env.os == 'redhat':
@@ -172,21 +172,21 @@ def run_apache_command(command):
 
 #convenience functions:
 def restart_apache():
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     run_apache_command('restart')
 
 def stop_apache():
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     run_apache_command('stop')
 
 def start_apache():
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     run_apache_command('start')
 
 def reload_apache():
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     run_apache_command('reload')
 
 def status_apache():
-    require('os', 'sudo_user', provided_by=('setup_env'))
+    require('os', provided_by=('setup_env'))
     run_apache_command('status')

@@ -20,7 +20,7 @@ Supervisor Module Settings
 
 """
 import posixpath
-from fabric.context_managers import cd
+from fabric.context_managers import cd, show
 from fabric.contrib.files import uncomment
 from fabric.operations import sudo, require, put
 from fabric.state import env
@@ -38,12 +38,14 @@ def setup_env(deploy_level="staging"):
     else:
         raise Exception("Unrecognized Deploy Level: %s" % deploy_level)
 
-    env.user = settings.PROJECT_USER
-    env.sudo_user = settings.SUDO_USER
-
+#    env.user = settings.PROJECT_USER
+#    env.sudo_user = settings.SUDO_USER
+    env.os = what_os()
     env.sup_dict = settings.SUPERVISOR_DICT
+    env.supervisor_init_path = settings.SUPERVISOR_INIT_TEMPLATE
     env.project = settings.PROJECT_NAME
     env.project_root = settings.PROJECT_ROOT % env #remember to pass in the 'env' dict before using this field from settings, since it could contain keywords.
+    env.sudo_user = settings.SUDO_USER
     _setup_path()
 
 def _production():
@@ -64,14 +66,12 @@ def _setup_path():
     in deploying code, populating config templates, etc.
     """
     # using posixpath to ensure unix style slashes. See bug-ticket: http://code.fabfile.org/attachments/61/posixpath.patch
-    env.sup_template_path = posixpath.join(posixpath.abspath(settings.__file__),settings.SUPERVISOR_TEMPLATE_PATH)
     env.project_root = settings.PROJECT_ROOT
     env.www_root = posixpath.join(env.project_root,'www',env.environment)
     env.log_dir = posixpath.join(env.www_root,'log')
     env.code_root = posixpath.join(env.www_root,'code_root')
-    env.project_media = posixpath.join(env.code_root, 'media')
-    env.project_static = posixpath.join(env.project_root, 'static')
-    env.virtuanlenv_name = getattr(settings, 'PYTHON_ENV_NAME', 'python_env') #not a required setting and should be sufficient with default name
+    env.sup_template_path = posixpath.join(posixpath.abspath(settings.__file__),settings.SUPERVISOR_TEMPLATE_PATH)
+    env.virtualenv_name = getattr(settings, 'PYTHON_ENV_NAME', 'python_env') #not a required setting and should be sufficient with default name
     env.virtualenv_root = posixpath.join(env.www_root, env.virtualenv_name)
     env.services_root = posixpath.join(env.project_root, 'services')
     env.supervisor_conf_root = posixpath.join(env.services_root, 'supervisor')
@@ -101,7 +101,7 @@ def install_supervisor():
     require('environment', 'project_root', 'virtualenv_root', 'sudo_user', provided_by='setup_env')
 
     #we don't install supervisor in the virtualenv since we want it to be able to run systemwide.
-    sudo('pip install supervisor' % env, user=env.sudo_user, pty=True, shell=True)
+    sudo('pip install supervisor' % env, pty=True, shell=True)
 
     #create the standard conf file
     sudo('echo_supervisord_conf > /tmp/supervisord.conf' % env)
@@ -111,21 +111,29 @@ def install_supervisor():
     uncomment('/etc/supervisord.conf', '\;\\[include\\]', use_sudo=True, char=';', backup='.bak')
     sudo("echo 'files = %(supervisor_conf_root)s/*.conf' >> /etc/supervisord.conf" % env)
 
-    put(env.supervisor_init_path, '/tmp/supervisor_init.tmp', mode='0777')
-    sudo('mv /tmp/supervisor_init /etc/init.d/supervisord')
+    init_temp_path = '/tmp/supervisor_init.tmp'
+    put(env.supervisor_init_path, init_temp_path)
+    sudo('chown root %s' % init_temp_path)
+    sudo('chgrp root %s' % init_temp_path)
+    sudo('chmod +x %s' % init_temp_path)
+    sudo('mv %s /etc/init.d/supervisord' % init_temp_path)
     sudo('chmod +x /etc/init.d/supervisord')
-    sudo('update-rc.d supervisord defaults')
+    if env.os == 'ubuntu':
+        sudo('update-rc.d supervisord defaults')
+    elif env.os == 'redhat':
+        sudo('chkconfig --add supervisord')
+
     sudo('service supervisord start')
 
     #update supervisor instance
     _supervisor_command('update')
 
-def bootstrap():
+def bootstrap(deploy_level='staging'):
     """
     Installs supervisor, creates required directories (if they don't exist). Points supervisord.conf to look in the correct
     folder for service info
     """
-    require('environment', 'project_root', 'virtualenv_root', 'sudo_user', provided_by='setup_env')
+    setup_env(deploy_level)
     install_supervisor()
     setup_dirs()
     upload_sup_template()

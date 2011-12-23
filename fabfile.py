@@ -112,6 +112,8 @@ def _setup_env():
     env.deploy_root = posixpath.dirname(__file__)
     env.home = posixpath.split(env.deploy_root)
     env.deploy_modules = deploy_settings.MODULES
+    env.show = ['debug']
+    _setup_paths()
 
 def production():
     """ use production environment on remote host"""
@@ -127,6 +129,21 @@ def staging():
     env.hosts = deploy_settings.STAGING_HOST
     env.deploy_level = 'staging'
     _setup_env()
+
+def _setup_paths():
+    """
+    Creates all the various paths that will be needed
+    in deploying code, populating config templates, etc.
+    """
+    # using posixpath to ensure unix style slashes. See bug-ticket: http://code.fabfile.org/attachments/61/posixpath.patch
+    env.project_root = deploy_settings.PROJECT_ROOT
+    env.www_root = posixpath.join(env.project_root,'www',env.environment)
+    env.log_dir = posixpath.join(env.www_root,'log')
+    env.code_root = posixpath.join(env.www_root,'code_root')
+    env.project_media = posixpath.join(env.code_root, 'media')
+    env.project_static = posixpath.join(env.project_root, 'static')
+    env.virtualenv_root = posixpath.join(env.www_root, 'python_env')
+    env.services = posixpath.join(env.project_root, 'services')
 
 def run_command(cmd,module=None,*args,**kwargs):
     """

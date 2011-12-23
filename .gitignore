@@ -1,4 +1,5 @@
 .idea/
 *.pyc
 docs/_build/*
-
+apps.txt
+localsettings.py

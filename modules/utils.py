@@ -64,3 +64,31 @@ def try_import(module_name):
         # couldn't be imported, which is fine, since allowing that is
         # the purpose of this function.
         return None
+
+
+def bootstrap(deploy_level='staging'):
+    """
+    Does nothing in this module.
+    """
+    pass
+
+
+def develop(deploy_level='staging'):
+    """
+    Does nothing in this module.
+    """
+    pass
+
+
+def stop(deploy_level='staging'):
+    """
+    Does nothing in this module.
+    """
+    pass
+
+
+def start(deploy_level='staging'):
+    """
+    Does nothing in this module.
+    """
+    pass
