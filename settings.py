@@ -3,14 +3,16 @@ House the settings for your modules, and your project in general, here.
 """
 
 """The remote hosts you'll be deploying this project to."""
-STAGING_HOST = ["50.56.246.140"]
+#STAGING_HOST = ["50.56.246.140"]
+STAGING_HOST = ["192.168.100.62"]
 PRODUCTION_HOST = ["192.168.1.1"]
 
-#The unix user that will be the owner of this project
-PROJECT_USER = "aremind"
-SUDO_USER = "aremind"
 
-PROJECT_NAME = "aremind"
+#The unix user that will be the owner of this project
+PROJECT_USER = "adewinter"
+SUDO_USER = "adewinter"
+
+PROJECT_NAME = "adewinter"
 
 
 #Path to folder that holds both the code_root and virtualenv folder.
@@ -22,15 +24,17 @@ PROJECT_NAME = "aremind"
 #%(project_user),
 #%(os),
 #%(environment) - The 'deploy level' e.g. 'staging' or 'production'
-PROJECT_ROOT = '/home/aremind/'
+PROJECT_ROOT = '/home/adewinter/'
 
 #Deploy modules we'll be utilizing in this project
 MODULES = ["modules.os",
-           "modules.web",
-           "modules.utils",
-           "modules.packages"
-           "modules.django",
-           "modules.supervisor",
+           "modules.db"
+#           "modules.web",
+#           "modules.utils",
+#           "modules.packages"
+#           "modules.django",
+#           "modules.supervisor",
+
            ]
 
 
@@ -73,12 +77,23 @@ WEB_PARAM_DICT = {
     "HOST_PORT" : 80 #Primary port for hosting things
 }
 ##### SUPERVISOR MODULE SPECIFIC SETTINGS ######
-SUPERVISOR_TEMPLATE_PATH = "templates/supervisorctl.conf"  #PATH ON LOCAL DISK, RELATIVE TO THIS FILE
-SUPERVISOR_INIT_TEMPLATE = "templates/supervisor-init"  #PATH ON LOCAL DISK, Relative to THIS file.
+SUPERVISOR_TEMPLATE_PATH = "..\\..\\workspace-temp\\aremind\\services\\templates\\supervisor.conf"  #PATH ON LOCAL DISK, RELATIVE TO THIS FILE
+SUPERVISOR_INIT_TEMPLATE = "templates\\supervisor-init"  #PATH ON LOCAL DISK, Relative to THIS file.
 SUPERVISOR_DICT = {
     "gunicorn_port": DJANGO_GUNICORN_PORT,
-    "gunicorn_workers": 3
+    "gunicorn_workers": 3,
+    "project": PROJECT_NAME,
+    "server_port": DJANGO_GUNICORN_PORT,
 }
+
+######## DB MODULE SETTINGS #####################
+DB_DATABASE_NAME = "aremind" #name of database to be created
+DB_DATABASE_USER = "aremind" #owner of new database
+DB_ALTERNATE_LOCATION = "/opt/data/" #Location on remote machine where you would like to store the DB
+DB_MOVE_DB_AT_BOOTSTRAP = True #(default is False). If this is set to true, DB will be relocated according to DB_ALTERNATE_LOCATION
+DB_DATABASE_NAME = "some_name_db" #name of database to be created
+DB_DATABASE_USER = "some_user" #owner of new database
+
 
 ##### UTILS MODULE SPECIFIC SETTINGS ######
 #some stuff...

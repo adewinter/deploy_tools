@@ -19,6 +19,8 @@ Supervisor Module Settings
 
 
 """
+from __future__ import absolute_import
+import os
 import posixpath
 from fabric.context_managers import cd, show
 from fabric.contrib.files import uncomment
@@ -41,12 +43,27 @@ def setup_env(deploy_level="staging"):
 #    env.user = settings.PROJECT_USER
 #    env.sudo_user = settings.SUDO_USER
     env.os = what_os()
-    env.sup_dict = settings.SUPERVISOR_DICT
     env.supervisor_init_path = settings.SUPERVISOR_INIT_TEMPLATE
     env.project = settings.PROJECT_NAME
     env.project_root = settings.PROJECT_ROOT % env #remember to pass in the 'env' dict before using this field from settings, since it could contain keywords.
     env.sudo_user = settings.SUDO_USER
     _setup_path()
+    _populate_supervisor_dict()
+
+def _populate_supervisor_dict():
+    d = settings.SUPERVISOR_DICT
+    d["project_root"] = env.project_root
+    d["www_root"] = env.www_root
+    d["log_dir"] = env.log_dir
+    d["code_root"] = env.code_root
+    d["project_media"] = env.project_media
+    d["project_static"] = env.project_static
+    d["virtualenv_root"] = env.virtualenv_root
+    d["services"] = env.services
+    d["environment"] = env.environment
+    d["sudo_user"] = env.sudo_user
+    
+    env.sup_dict = d
 
 def _production():
     """ use production environment on remote host"""
@@ -70,7 +87,8 @@ def _setup_path():
     env.www_root = posixpath.join(env.project_root,'www',env.environment)
     env.log_dir = posixpath.join(env.www_root,'log')
     env.code_root = posixpath.join(env.www_root,'code_root')
-    env.sup_template_path = posixpath.join(posixpath.abspath(settings.__file__),settings.SUPERVISOR_TEMPLATE_PATH)
+    settings_folder = os.path.split(os.path.abspath(settings.__file__))[0]
+    env.sup_template_path = os.path.join(settings_folder, settings.SUPERVISOR_TEMPLATE_PATH) #note the us of os.path not posixpath
     env.virtualenv_name = getattr(settings, 'PYTHON_ENV_NAME', 'python_env') #not a required setting and should be sufficient with default name
     env.virtualenv_root = posixpath.join(env.www_root, env.virtualenv_name)
     env.services_root = posixpath.join(env.project_root, 'services')
@@ -86,7 +104,7 @@ def setup_dirs():
         sudo('mkdir -p %(log_dir)s' % env, user=env.sudo_user)
         sudo('chmod a+w %(log_dir)s' % env, user=env.sudo_user)
 
-    if not files.exists(env.services_supervisor):
+    if not files.exists(env.supervisor_conf_root):
         print green('Supervisor services (%s) folder does not exist. Creating...' % env.supervisor_conf_root)
         sudo('mkdir -p %(supervisor_conf_root)s' % env, user=env.sudo_user)
 
