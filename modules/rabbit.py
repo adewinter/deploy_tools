@@ -1,5 +1,5 @@
 """
-This is an example module.  Use this as a base for your own modules.
+This module is intended to install and configure RabbitMQ/Celery stuff.  Not finished yet.
 """
 
 from __future__ import absolute_import
