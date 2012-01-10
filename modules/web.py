@@ -1,6 +1,5 @@
 """
-Install/Configure web services
-(e.g. Apache/Nginx)
+Install/Configure Apache for your static (or other web) file serving needs.
 
 Web Module Settings
 -------------------
