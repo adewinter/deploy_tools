@@ -1,6 +1,9 @@
 """
 Utility functions
+
 (e.g. Determining the remote system OS)
+
+You should ALWAYS include this module in your deployment.  It contains functions that are used by other modules.
 """
 from fabric.context_managers import *
 from fabric.operations import *
