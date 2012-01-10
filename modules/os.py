@@ -1,8 +1,13 @@
 """
 OS Level Operations.
+
 Creates required users
+
 Installs base packages
+
 Misc OS level config
+
+This module set env.user to your settings.SUDO_USER, be sure to have that set to a good value in your settings file!
 
 OS MODULE SPECIFIC SETTINGS
 ---------------------------
@@ -38,6 +43,7 @@ def setup_env(deploy_level="staging"):
     
 def _production():
     """ use production environment on remote host"""
+    env.user = settings.SUDO_USER
     env.environment = 'production'
     env.server_name = 'project-production.dimagi.com'
     env.hosts = settings.PRODUCTION_HOST
@@ -45,6 +51,7 @@ def _production():
 
 def _staging():
     """ use staging environment on remote host"""
+    env.user = settings.SUDO_USER
     env.environment = 'staging'
     env.server_name = 'project-staging.dimagi.com'
     env.hosts = settings.STAGING_HOST
